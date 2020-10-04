@@ -26,5 +26,5 @@ public class BookingDto {
 
     private LocalDateTime bookedOn;
 
-    private String customerName;
+    private Integer customerId;
 }

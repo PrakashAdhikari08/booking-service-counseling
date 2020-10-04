@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/booking/v1/")
 public class BookingController {
@@ -14,9 +16,19 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    @PostMapping("appointment/{customerName}")
-    public ResponseEntity<String> makeAppointment(@RequestBody BookingDto bookingDto, @PathVariable String customerName){
-                  bookingService.makeAppointment(bookingDto, customerName);
-        return new ResponseEntity<>("Booked for "+customerName, HttpStatus.OK);
+    @PostMapping("appointment/{customerId}")
+    public ResponseEntity<String> makeAppointment(@RequestBody BookingDto bookingDto, @PathVariable Integer customerId){
+                  bookingService.makeAppointment(bookingDto, customerId);
+        return new ResponseEntity<>("Booked for "+customerId, HttpStatus.OK);
+    }
+
+    @GetMapping("get-all-booking/{customerId}")
+    public List<BookingDto> getBookingCustomer(@PathVariable Integer customerId){
+        return bookingService.getBookingCustomer(customerId);
+    }
+
+    @DeleteMapping("delete/{bookingId}")
+    public Integer cancelBookingCustomer(@PathVariable Integer bookingId){
+        return bookingService.cancelBookingCustomer(bookingId);
     }
 }

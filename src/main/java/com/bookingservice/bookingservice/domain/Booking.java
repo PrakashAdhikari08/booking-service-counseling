@@ -15,7 +15,7 @@ import java.time.LocalTime;
 
 @Entity
 @Data
-public class Booking {
+public class Booking  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +33,5 @@ public class Booking {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd , HH:mm:ss")
     private LocalDateTime bookedOn;
 
-    private String customerName;
+    private Integer customerId;
 }
