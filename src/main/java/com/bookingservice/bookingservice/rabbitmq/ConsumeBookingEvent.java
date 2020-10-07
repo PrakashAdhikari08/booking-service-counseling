@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.transaction.annotation.Transactional;
 
 @EnableBinding(RabbitMqInputChannel.class)
 public class ConsumeBookingEvent {
@@ -23,14 +24,23 @@ public class ConsumeBookingEvent {
     RabbitMqInputChannel rabbitMqInputChannel;
 
     @StreamListener(target = RabbitMqInputChannel.CHANNEL)
+    @Transactional
     public void processBooking(BookingDto bookingDto) {
+
+        try{
         bookingService.makeAppointment(bookingDto,1);
 
         Message<Integer> message = MessageBuilder.withPayload(bookingDto.getCustomerId())
                 .build();
-        rabbitMqInputChannel.bookingConfrmed().send(message);
 
-        System.out.println("message consumed  for " + bookingDto.getCustomerId());
+        throw new RuntimeException("Booking Failed");
+//        rabbitMqInputChannel.bookingConfrmed().send(message);
+
+//        System.out.println("message consumed  for " + bookingDto.getCustomerId());
+    }
+        catch (Exception e){
+
+        }
     }
 
 }
