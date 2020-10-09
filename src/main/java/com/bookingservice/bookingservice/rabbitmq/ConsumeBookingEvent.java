@@ -14,7 +14,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
-@EnableBinding(RabbitMqInputChannel.class)
+@EnableBinding({RabbitMqInputChannel.class,CompensateBooking.class})
 public class ConsumeBookingEvent {
 
     @Autowired
@@ -22,6 +22,9 @@ public class ConsumeBookingEvent {
 
     @Autowired
     RabbitMqInputChannel rabbitMqInputChannel;
+
+    @Autowired
+    CompensateBooking compensateBooking;
 
     @StreamListener(target = RabbitMqInputChannel.CHANNEL)
     @Transactional
@@ -39,7 +42,10 @@ public class ConsumeBookingEvent {
 //        System.out.println("message consumed  for " + bookingDto.getCustomerId());
     }
         catch (Exception e){
-
+            System.out.println(e.getMessage());
+            Message<Integer> message = MessageBuilder.withPayload(bookingDto.getCustomerId()).build();
+            compensateBooking.bookingFailed().send(message);
+            System.out.println("compensated event raise");
         }
     }
 
